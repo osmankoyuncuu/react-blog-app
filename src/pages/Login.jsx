@@ -10,19 +10,37 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import GoogleLogo from "../assets/google.png";
+import { useAuth } from "../context/AuthContext";
+import { signIn, signUpWithGoogle } from "../auth/firebase";
+import { useNavigate } from "react-router-dom";
+import { Form, Formik } from "formik";
+import LoadingButton from "@mui/lab/LoadingButton";
+import * as yup from "yup";
+
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Please enter valid email")
+    .required("Please  enter an email"),
+  password: yup
+    .string()
+    .required("Please enter a password ")
+    .min(8, "Password must have min 8 chars")
+    .max(16, "Password must have max 16 chars")
+    .matches(/\d+/, "Password must have a number")
+    .matches(/[a-z]+/, "Password must have a lowercase")
+    .matches(/[A-Z]+/, "Password must have an uppercase")
+    .matches(/[!,?{}><%&$#£+-.]+/, " Password must have a special char"),
+});
 
 const Login = () => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+  const { currentUser, loading, setLoading } = useAuth();
+  const navigate = useNavigate();
 
+  console.log(currentUser);
   return (
-    <Grid container component="main" sx={{ height: `calc(100vh - 65px)` }}>
+    <Grid container component="main" sx={{ height: `calc(100vh - 64px)` }}>
       <Grid
         item
         xs={false}
@@ -55,43 +73,83 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+          <Box sx={{ width: "100%", padding: "1rem 3rem" }}>
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={loginSchema}
+              onSubmit={(values, actions) => {
+                signIn(values, navigate, setLoading);
+                setLoading(true);
+                actions.resetForm();
+                actions.setSubmitting(false);
+              }}
+            >
+              {({
+                values,
+                isSubmitting,
+                handleChange,
+                handleBlur,
+                touched,
+                errors,
+              }) => (
+                <Form>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                    }}
+                  >
+                    <TextField
+                      label="Email Address"
+                      name="email"
+                      id="email"
+                      type="email"
+                      margin="normal"
+                      variant="outlined"
+                      value={values.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                    />
+                    <TextField
+                      label="Password"
+                      name="password"
+                      id="password"
+                      type="password"
+                      variant="outlined"
+                      value={values.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={touched.password && errors.password}
+                    />
+                    <FormControlLabel
+                      control={<Checkbox value="remember" color="primary" />}
+                      label="Remember me"
+                    />
+                    <LoadingButton
+                      type="submit"
+                      loading={loading}
+                      loadingPosition="center"
+                      variant="contained"
+                    >
+                      Sing In
+                    </LoadingButton>
+                  </Box>
+                </Form>
+              )}
+            </Formik>
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 2, mb: 2 }}
+              onClick={() => signUpWithGoogle(navigate)}
             >
-              Sign In
+              <img src={GoogleLogo} width="25px" alt="google-logo" />
+              Continue with Google
             </Button>
             <Grid container>
               <Grid item xs>

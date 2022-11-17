@@ -1,32 +1,62 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import GoogleLogo from "../assets/google.png";
+import { useAuth } from "../context/AuthContext";
+import { createUser, signUpWithGoogle } from "../auth/firebase";
+import { useNavigate } from "react-router-dom";
+import { Form, Formik } from "formik";
+import LoadingButton from "@mui/lab/LoadingButton";
+import * as yup from "yup";
+
+const loginSchema = yup.object().shape({
+  firstname: yup
+    .string()
+    .matches(/[a-z]+/)
+    .required(),
+  lastname: yup
+    .string()
+    .matches(/[a-z]+/)
+    .required(),
+  username: yup
+    .string()
+    .matches(/[a-z]+/)
+    .required(),
+  email: yup
+    .string()
+    .email("Please enter valid email")
+    .required("Please  enter an email"),
+  password: yup
+    .string()
+    .required("Please enter a password ")
+    .min(8, "Password must have min 8 chars")
+    .max(16, "Password must have max 16 chars")
+    .matches(/\d+/, "Password must have a number")
+    .matches(/[a-z]+/, "Password must have a lowercase")
+    .matches(/[A-Z]+/, "Password must have an uppercase")
+    .matches(/[!,?{}><%&$#£+-.]+/, " Password must have a special char"),
+  passwordConfirm: yup
+    .string()
+    .oneOf([yup.ref("password")])
+    .required(),
+});
 
 const Register = () => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+  const { loading, setLoading } = useAuth();
+  const navigate = useNavigate();
 
   return (
-    <Grid container component="main" sx={{ height: `calc(100vh - 65px)` }}>
+    <Grid container component="main" sx={{ height: `calc(100vh - 64px)` }}>
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <Box
           sx={{
-            my: 8,
+            my: 1,
             mx: 4,
             display: "flex",
             flexDirection: "column",
@@ -36,74 +66,144 @@ const Register = () => {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5" mb={2}>
+          <Typography component="h1" variant="h5" mb={1}>
             Sign up
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 1 }}
-          >
-            <Box sx={{ display: "flex", gap: "0.2rem" }}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-            </Box>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="text"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
+          <Box sx={{ width: "100%", padding: "1rem 3rem" }}>
+            <Formik
+              initialValues={{
+                firstname: "",
+                lastname: "",
+                username: "",
+                email: "",
+                password: "",
+                passwordConfirm: "",
+              }}
+              validationSchema={loginSchema}
+              onSubmit={(values, actions) => {
+                createUser(values, navigate, setLoading);
+                setLoading(true);
+                actions.resetForm();
+                actions.setSubmitting(false);
+              }}
+            >
+              {({
+                values,
+                isSubmitting,
+                handleChange,
+                handleBlur,
+                touched,
+                errors,
+              }) => (
+                <Form>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: ".7rem",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", gap: "0.2rem" }}>
+                      <TextField
+                        label="First Name"
+                        name="firstname"
+                        type="text"
+                        variant="outlined"
+                        fullWidth
+                        value={values.firstname}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.firstname && Boolean(errors.firstname)}
+                        helperText={touched.firstname && errors.firstname}
+                      />
+                      <TextField
+                        label="Last Name"
+                        name="lastname"
+                        type="text"
+                        variant="outlined"
+                        fullWidth
+                        value={values.lastname}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.lastname && Boolean(errors.lastname)}
+                        helperText={touched.lastname && errors.lastname}
+                      />
+                    </Box>
+                    <TextField
+                      label="Username"
+                      name="username"
+                      type="text"
+                      variant="outlined"
+                      fullWidth
+                      value={values.username}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.username && Boolean(errors.username)}
+                      helperText={touched.username && errors.username}
+                    />
+                    <TextField
+                      label="Email Address"
+                      name="email"
+                      type="email"
+                      variant="outlined"
+                      value={values.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                    />
+                    <TextField
+                      label="Password"
+                      name="password"
+                      type="password"
+                      variant="outlined"
+                      value={values.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={touched.password && errors.password}
+                    />
+                    <TextField
+                      label="Password"
+                      name="passwordConfirm"
+                      type="password"
+                      variant="outlined"
+                      value={values.passwordConfirm}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={
+                        touched.passwordConfirm &&
+                        Boolean(errors.passwordConfirm)
+                      }
+                      helperText={
+                        touched.passwordConfirm && errors.passwordConfirm
+                      }
+                    />
+
+                    <LoadingButton
+                      type="submit"
+                      loading={loading}
+                      loadingPosition="center"
+                      variant="contained"
+                      sx={{ mt: 2 }}
+                    >
+                      Sing Up
+                    </LoadingButton>
+                  </Box>
+                </Form>
+              )}
+            </Formik>
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 2, mb: 2 }}
+              onClick={() => signUpWithGoogle(navigate)}
             >
-              Sign Up
+              <img src={GoogleLogo} width="25px" alt="google-logo" />
+              Continue with Google
             </Button>
+
             <Grid container sx={{ display: "flex", justifyContent: "end" }}>
               <Grid item>
                 <Link href="#" variant="body2">
@@ -111,6 +211,7 @@ const Register = () => {
                 </Link>
               </Grid>
             </Grid>
+
             <Typography
               mt={4}
               variant="body2"
