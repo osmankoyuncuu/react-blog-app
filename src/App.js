@@ -1,7 +1,11 @@
 import { createTheme, ThemeProvider } from "@mui/material";
 import { cyan } from "@mui/material/colors";
 import CssBaseline from "@mui/material/CssBaseline";
+import { ToastContainer } from "react-toastify";
+import { AuthContextProvider } from "./context/AuthContext";
 import AppRouter from "./router/AppRouter";
+import "react-toastify/dist/ReactToastify.css";
+import { BlogListProvider } from "./context/BlogListContext";
 
 const App = () => {
   const theme = createTheme({
@@ -12,10 +16,15 @@ const App = () => {
     },
   });
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppRouter />
-    </ThemeProvider>
+    <AuthContextProvider>
+      <BlogListProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppRouter />
+          <ToastContainer />
+        </ThemeProvider>
+      </BlogListProvider>
+    </AuthContextProvider>
   );
 };
 

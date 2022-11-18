@@ -43,7 +43,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export const createUser = async (values, displayName, navigate, setLoading) => {
-  const { firstname, lastname, email, password } = values;
+  const { email, password } = values;
   try {
     let userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -63,7 +63,7 @@ export const createUser = async (values, displayName, navigate, setLoading) => {
 };
 
 export const signIn = async (values, navigate, setLoading, displayName) => {
-  const { firstname, lastname, email, password } = values;
+  const { email, password } = values;
   try {
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/");
@@ -142,7 +142,6 @@ export const newBlog = (values, setLoading) => {
 };
 
 export const updateBlog = (values, setLoading, navigate) => {
-  console.log(values);
   try {
     const docRef = doc(db, "blog", values.id);
     updateDoc(docRef, values);
@@ -160,7 +159,7 @@ export const getDataById = async (id) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    return docSnap.data();
+    return { id: docSnap.id, ...docSnap.data() };
   } else {
     // doc.data() will be undefined in this case
     console.log("No such document!");
