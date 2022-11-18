@@ -20,7 +20,6 @@ const style = {
 
 const ModalDelete = ({ open, setOpen, id }) => {
   const navigate = useNavigate();
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (

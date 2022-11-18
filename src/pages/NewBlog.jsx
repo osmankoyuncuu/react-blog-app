@@ -1,9 +1,20 @@
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import BlogBoard from "../assets/blog-board.jpg";
-import Button from "@mui/material/Button";
+import { Form, Formik } from "formik";
+import { useAuth } from "../context/AuthContext";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { newBlog } from "../auth/firebase";
+import * as yup from "yup";
+
+const newBlogSchema = yup.object().shape({
+  title: yup.string().required("Please  enter an title"),
+  img: yup.string().required("Please  enter an img"),
+  content: yup.string().required("Please  enter an content"),
+});
 
 const NewBlog = () => {
+  const { currentUser, loading, setLoading } = useAuth();
   return (
     <Box
       mt={2}
@@ -11,45 +22,101 @@ const NewBlog = () => {
     >
       <Box
         sx={{
-          width: "500px",
+          width: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
           justifyContent: "center",
           gap: "1rem",
-          padding: "1rem 2rem",
+          padding: "2rem 5rem",
         }}
       >
-        <img src={BlogBoard} alt="Blog-Board" width="100%" />
-        <TextField
-          required
-          id="outlined-required"
-          label="Title"
-          variant="outlined"
-          autoFocus
-          sx={{ width: "100%" }}
-        />
-        <TextField
-          required
-          id="outlined-required"
-          label="Image URL"
-          variant="outlined"
-          sx={{ width: "100%" }}
-          size="300px"
-        />
-        <TextField
-          required
-          id="outlined-required"
-          label="Image URL"
-          variant="outlined"
-          multiline
-          rows={10}
-          maxRows={20}
-          sx={{ width: "100%" }}
-        />
-        <Button variant="contained" sx={{ width: "100%" }}>
-          Submit
-        </Button>
+        <img src={BlogBoard} alt="Blog-Board" width="40%" />
+        <Box sx={{ width: "40%" }}>
+          <Formik
+            initialValues={{
+              title: "",
+              img: "",
+              content: "",
+              date: new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }),
+              author: currentUser?.displayName,
+              user: currentUser?.email,
+            }}
+            validationSchema={newBlogSchema}
+            onSubmit={(values, actions) => {
+              setLoading(true);
+              newBlog(values, setLoading);
+              actions.resetForm();
+              actions.setSubmitting(false);
+            }}
+          >
+            {({
+              values,
+              isSubmitting,
+              handleChange,
+              handleBlur,
+              touched,
+              errors,
+            }) => (
+              <Form>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+
+                    gap: ".5rem",
+                  }}
+                >
+                  <TextField
+                    label="Title"
+                    name="title"
+                    type="text"
+                    variant="outlined"
+                    value={values.title}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.title && Boolean(errors.title)}
+                    helperText={touched.title && errors.title}
+                  />
+                  <TextField
+                    label="Image URL"
+                    name="img"
+                    type="text"
+                    variant="outlined"
+                    value={values.img}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.img && Boolean(errors.img)}
+                    helperText={touched.img && errors.img}
+                  />
+                  <TextField
+                    label="Content"
+                    name="content"
+                    type="text"
+                    variant="outlined"
+                    value={values.content}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.content && Boolean(errors.content)}
+                    helperText={touched.content && errors.content}
+                    multiline
+                    rows={10}
+                  />
+                  <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingPosition="center"
+                    variant="contained"
+                  >
+                    Submit
+                  </LoadingButton>
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </Box>
       </Box>
     </Box>
   );

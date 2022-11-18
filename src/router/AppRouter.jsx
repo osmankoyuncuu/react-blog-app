@@ -8,18 +8,25 @@ import Profile from "../pages/Profile";
 import Register from "../pages/Register";
 import UpdateBlog from "../pages/UpdateBlog";
 import NotFound from "../pages/NotFound";
+import { useBlogList } from "../context/BlogListContext";
+import { useBlogListener } from "../auth/firebase";
+import PrivateRouter from "./PrivateRouter";
 
 const AppRouter = () => {
+  const { setBlogList } = useBlogList();
+  useBlogListener(setBlogList);
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/detail" element={<Detail />} />
+        <Route path="/detail/:id" element={<PrivateRouter />}>
+          <Route path="" element={<Detail />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/new-blog" element={<NewBlog />} />
-        <Route path="/update-blog" element={<UpdateBlog />} />
+        <Route path="/update-blog/:id" element={<UpdateBlog />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>

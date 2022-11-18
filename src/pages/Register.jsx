@@ -24,10 +24,6 @@ const loginSchema = yup.object().shape({
     .string()
     .matches(/[a-z]+/)
     .required(),
-  username: yup
-    .string()
-    .matches(/[a-z]+/)
-    .required(),
   email: yup
     .string()
     .email("Please enter valid email")
@@ -49,6 +45,7 @@ const loginSchema = yup.object().shape({
 
 const Register = () => {
   const { loading, setLoading } = useAuth();
+
   const navigate = useNavigate();
 
   return (
@@ -74,14 +71,14 @@ const Register = () => {
               initialValues={{
                 firstname: "",
                 lastname: "",
-                username: "",
                 email: "",
                 password: "",
                 passwordConfirm: "",
               }}
               validationSchema={loginSchema}
               onSubmit={(values, actions) => {
-                createUser(values, navigate, setLoading);
+                const displayName = `${values.firstname} ${values.lastname}`;
+                createUser(values, displayName, navigate, setLoading);
                 setLoading(true);
                 actions.resetForm();
                 actions.setSubmitting(false);
@@ -129,18 +126,6 @@ const Register = () => {
                         helperText={touched.lastname && errors.lastname}
                       />
                     </Box>
-                    <TextField
-                      label="Username"
-                      name="username"
-                      type="text"
-                      variant="outlined"
-                      fullWidth
-                      value={values.username}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.username && Boolean(errors.username)}
-                      helperText={touched.username && errors.username}
-                    />
                     <TextField
                       label="Email Address"
                       name="email"
@@ -206,8 +191,8 @@ const Register = () => {
 
             <Grid container sx={{ display: "flex", justifyContent: "end" }}>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Already have an account? Sign in"}
+                <Link href="/login" variant="body2">
+                  Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>

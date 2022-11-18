@@ -9,11 +9,14 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { logOut } from "../auth/firebase";
 
 const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -22,7 +25,6 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
   return (
     <>
       <AppBar position="fixed">
@@ -31,7 +33,6 @@ const Navbar = () => {
             <Typography
               variant="h6"
               noWrap
-              component="a"
               href="/"
               sx={{
                 mr: 2,
@@ -40,6 +41,11 @@ const Navbar = () => {
                 letterSpacing: ".3rem",
                 color: "inherit",
                 textDecoration: "none",
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/");
               }}
             >
               LOGO
@@ -53,10 +59,13 @@ const Navbar = () => {
                 gap: "1rem",
               }}
             >
-              <Typography>Remy</Typography>
+              <Typography>{currentUser?.displayName}</Typography>
               <Tooltip>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    src={currentUser?.photoURL}
+                    alt={currentUser?.displayName}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -75,17 +84,59 @@ const Navbar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))}
+                {currentUser ? (
+                  <div>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        navigate("/profile");
+                      }}
+                    >
+                      <Typography textAlign="center">Profile</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        navigate("/new-blog");
+                      }}
+                    >
+                      <Typography textAlign="center">New Blog</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        logOut();
+                      }}
+                    >
+                      <Typography textAlign="center">Logout</Typography>
+                    </MenuItem>
+                  </div>
+                ) : (
+                  <div>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        navigate("/login");
+                      }}
+                    >
+                      <Typography textAlign="center">Login</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        navigate("/register");
+                      }}
+                    >
+                      <Typography textAlign="center">Register</Typography>
+                    </MenuItem>
+                  </div>
+                )}
               </Menu>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      <Box sx={{ height: "65px" }}></Box>
+      <Box sx={{ height: "64px" }}></Box>
     </>
   );
 };

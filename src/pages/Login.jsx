@@ -12,11 +12,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import GoogleLogo from "../assets/google.png";
 import { useAuth } from "../context/AuthContext";
-import { signIn, signUpWithGoogle } from "../auth/firebase";
+import { forgotPassword, signIn, signUpWithGoogle } from "../auth/firebase";
 import { useNavigate } from "react-router-dom";
 import { Form, Formik } from "formik";
 import LoadingButton from "@mui/lab/LoadingButton";
 import * as yup from "yup";
+import { useState } from "react";
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -33,12 +34,19 @@ const loginSchema = yup.object().shape({
     .matches(/[A-Z]+/, "Password must have an uppercase")
     .matches(/[!,?{}><%&$#£+-.]+/, " Password must have a special char"),
 });
+const forgetSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Please enter valid email")
+    .required("Please  enter an email"),
+});
 
 const Login = () => {
-  const { currentUser, loading, setLoading } = useAuth();
+  const { loading, setLoading } = useAuth();
+  const [forgetPass, setForgetPass] = useState(false);
   const navigate = useNavigate();
+  console.log(forgetPass);
 
-  console.log(currentUser);
   return (
     <Grid container component="main" sx={{ height: `calc(100vh - 64px)` }}>
       <Grid
@@ -71,14 +79,20 @@ const Login = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            {forgetPass ? "Forget Passworrd" : "Sign in"}
           </Typography>
           <Box sx={{ width: "100%", padding: "1rem 3rem" }}>
             <Formik
-              initialValues={{ email: "", password: "" }}
-              validationSchema={loginSchema}
+              initialValues={
+                forgetPass ? { email: "" } : { email: "", password: "" }
+              }
+              validationSchema={forgetPass ? forgetSchema : loginSchema}
               onSubmit={(values, actions) => {
-                signIn(values, navigate, setLoading);
+                {
+                  forgetPass
+                    ? forgotPassword(values, setLoading)
+                    : signIn(values, navigate, setLoading);
+                }
                 setLoading(true);
                 actions.resetForm();
                 actions.setSubmitting(false);
@@ -103,7 +117,6 @@ const Login = () => {
                     <TextField
                       label="Email Address"
                       name="email"
-                      id="email"
                       type="email"
                       margin="normal"
                       variant="outlined"
@@ -113,29 +126,33 @@ const Login = () => {
                       error={touched.email && Boolean(errors.email)}
                       helperText={touched.email && errors.email}
                     />
-                    <TextField
-                      label="Password"
-                      name="password"
-                      id="password"
-                      type="password"
-                      variant="outlined"
-                      value={values.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.password && Boolean(errors.password)}
-                      helperText={touched.password && errors.password}
-                    />
-                    <FormControlLabel
-                      control={<Checkbox value="remember" color="primary" />}
-                      label="Remember me"
-                    />
+                    {!forgetPass && (
+                      <TextField
+                        label="Password"
+                        name="password"
+                        id="password"
+                        type="password"
+                        variant="outlined"
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.password && Boolean(errors.password)}
+                        helperText={touched.password && errors.password}
+                      />
+                    )}
+                    {!forgetPass && (
+                      <FormControlLabel
+                        control={<Checkbox value="remember" color="primary" />}
+                        label="Remember me"
+                      />
+                    )}
                     <LoadingButton
                       type="submit"
                       loading={loading}
                       loadingPosition="center"
                       variant="contained"
                     >
-                      Sing In
+                      {forgetPass ? "Send reset Link" : "Sing In"}
                     </LoadingButton>
                   </Box>
                 </Form>
@@ -153,13 +170,17 @@ const Login = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
+                <Link
+                  href="#"
+                  variant="body2"
+                  onClick={() => setForgetPass(!forgetPass)}
+                >
+                  {forgetPass ? "Continue with email" : "Forgot password?"}
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/register" variant="body2">
+                  Don't have an account? Sign Up
                 </Link>
               </Grid>
             </Grid>
