@@ -47,9 +47,7 @@ const BlogCard = () => {
               {item?.author?.[0].toUpperCase()}
             </Avatar>
           }
-          title={`${item?.author?.charAt(0).toUpperCase()}${item?.author?.slice(
-            1
-          )}`}
+          title={item?.author}
           subheader={item?.date}
         />
         <Box
