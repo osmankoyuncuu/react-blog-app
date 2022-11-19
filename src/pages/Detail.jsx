@@ -29,6 +29,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 import Loading from "../component/Loading";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const commentSchema = yup.object().shape({
   comment: yup.string().required("Please  enter an comment"),
@@ -115,6 +116,19 @@ const Detail = () => {
           <Typography>{detail?.commentList?.length}</Typography>
         </CardActions>
       </Card>
+      <Box
+        mt={2}
+        sx={{ display: "flex", justifyContent: "center", gap: "1rem" }}
+        onClick={() => navigate(-1)}
+      >
+        <Button
+          type="button"
+          variant="contained"
+          startIcon={<ArrowBackIosIcon />}
+        >
+          Go Back
+        </Button>
+      </Box>
       {currentUser?.email === detail?.user && (
         <Box
           mt={2}
@@ -136,7 +150,7 @@ const Detail = () => {
             endIcon={<DeleteIcon />}
             onClick={() => setOpen(!open)}
           >
-            Send
+            Delete
           </Button>
         </Box>
       )}
