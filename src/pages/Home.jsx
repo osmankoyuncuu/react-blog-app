@@ -8,7 +8,7 @@ const Home = () => {
   const { loading, setLoading } = useAuth();
   setTimeout(() => {
     setLoading(false);
-  }, 3000);
+  }, 1500);
 
   useEffect(() => {
     setLoading(true);
