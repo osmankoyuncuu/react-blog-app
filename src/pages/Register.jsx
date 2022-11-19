@@ -1,7 +1,6 @@
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -10,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import GoogleLogo from "../assets/google.png";
 import { useAuth } from "../context/AuthContext";
 import { createUser, signUpWithGoogle } from "../auth/firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Form, Formik } from "formik";
 import LoadingButton from "@mui/lab/LoadingButton";
 import * as yup from "yup";
@@ -182,7 +181,7 @@ const Register = () => {
 
             <Grid container sx={{ display: "flex", justifyContent: "end" }}>
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link to="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
