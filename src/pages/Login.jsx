@@ -2,8 +2,6 @@ import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -45,10 +43,13 @@ const Login = () => {
   const { loading, setLoading } = useAuth();
   const [forgetPass, setForgetPass] = useState(false);
   const navigate = useNavigate();
-  console.log(forgetPass);
 
   return (
-    <Grid container component="main" sx={{ height: `calc(100vh - 64px)` }}>
+    <Grid
+      container
+      component="main"
+      sx={{ height: `calc(100vh - (64px + 5rem))` }}
+    >
       <Grid
         item
         xs={false}
@@ -69,13 +70,12 @@ const Login = () => {
         <Box
           sx={{
             my: 8,
-            mx: 4,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -140,12 +140,7 @@ const Login = () => {
                         helperText={touched.password && errors.password}
                       />
                     )}
-                    {!forgetPass && (
-                      <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                      />
-                    )}
+
                     <LoadingButton
                       type="submit"
                       loading={loading}

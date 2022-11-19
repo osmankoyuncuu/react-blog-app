@@ -42,8 +42,9 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
-export const createUser = async (values, displayName, navigate, setLoading) => {
-  const { email, password } = values;
+export const createUser = async (values, navigate, setLoading) => {
+  const { firstname, lastname, email, password } = values;
+  const displayName = `${firstname} ${lastname}`;
   try {
     let userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -57,12 +58,12 @@ export const createUser = async (values, displayName, navigate, setLoading) => {
     navigate("/");
     toastSuccessNotify("Registered successfully!");
   } catch (error) {
-    toastErrorNotify(error.message);
     setLoading(false);
+    toastErrorNotify(error.message);
   }
 };
 
-export const signIn = async (values, navigate, setLoading, displayName) => {
+export const signIn = async (values, navigate, setLoading) => {
   const { email, password } = values;
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -70,8 +71,8 @@ export const signIn = async (values, navigate, setLoading, displayName) => {
     setLoading(false);
     toastSuccessNotify("Logged in successfully!");
   } catch (error) {
-    toastErrorNotify(error.message);
     setLoading(false);
+    toastErrorNotify(error.message);
   }
 };
 
@@ -99,19 +100,19 @@ export const signUpWithGoogle = (navigate) => {
       toastSuccessNotify("Logged in successfully!");
     })
     .catch((error) => {
-      console.log(error);
+      toastErrorNotify(error.message);
     });
 };
 
 export const forgotPassword = ({ email }, setLoading) => {
   sendPasswordResetEmail(auth, email)
     .then(() => {
-      toastWarnNotify("Please check your mail box!");
       setLoading(false);
+      toastWarnNotify("Please check your mail box!");
     })
     .catch((err) => {
-      toastErrorNotify(err.message);
       setLoading(false);
+      toastErrorNotify(err.message);
     });
 };
 
@@ -130,14 +131,13 @@ export const useBlogListener = (setBlogList) => {
 };
 
 export const newBlog = (values, setLoading) => {
-  console.log(values);
   try {
     setLoading(false);
     addDoc(blogRef, { ...values });
     toastSuccessNotify("Added Successfully!");
   } catch (error) {
-    toastWarnNotify(error.message);
     setLoading(false);
+    toastErrorNotify(error.message);
   }
 };
 
@@ -146,20 +146,20 @@ export const updateBlog = (values, setLoading, navigate) => {
     const docRef = doc(db, "blog", values.id);
     updateDoc(docRef, values);
     setLoading(false);
-    toastSuccessNotify("Updated Successfully!");
     navigate(-1);
+    toastSuccessNotify("Updated Successfully!");
   } catch (error) {
-    toastWarnNotify(error.message);
     setLoading(false);
+    toastErrorNotify(error.message);
   }
 };
 
-export const getDataById = async (id) => {
+export const getDataById = async (id, setDetail) => {
   const docRef = doc(db, "blog", id);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() };
+    setDetail({ id: docSnap.id, ...docSnap.data() });
   } else {
     // doc.data() will be undefined in this case
     console.log("No such document!");
@@ -172,5 +172,39 @@ export const deleteBlog = (id) => {
     toastErrorNotify("Deleted Successfully");
   } catch (error) {
     toastWarnNotify(error.message);
+  }
+};
+
+export const favoriteAddBlog = (values, currentUser) => {
+  try {
+    const { favoriteList } = values;
+    values?.favoriteList?.push(currentUser?.email);
+    const docRef = doc(db, "blog", values.id);
+    updateDoc(docRef, { ...values, favoriteList });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const favoriteNoneBlog = (values, currentUser) => {
+  try {
+    const { favoriteList } = values;
+    const index = values.favoriteList.indexOf(currentUser?.email);
+    values?.favoriteList?.splice(index, 1);
+    const docRef = doc(db, "blog", values.id);
+    updateDoc(docRef, { ...values, favoriteList });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const commentAddBlog = (detail, values) => {
+  try {
+    const { commentList } = detail;
+    commentList?.push(values);
+    const docRef = doc(db, "blog", detail.id);
+    updateDoc(docRef, { ...detail, commentList });
+  } catch (error) {
+    console.log(error.message);
   }
 };

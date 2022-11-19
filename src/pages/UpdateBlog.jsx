@@ -1,12 +1,12 @@
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import BlogBoard from "../assets/blog-board.jpg";
 import { Form, Formik } from "formik";
 import { useAuth } from "../context/AuthContext";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { updateBlog } from "../auth/firebase";
 import * as yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
+import Placeholder from "../assets/placeholder.png";
 
 const newBlogSchema = yup.object().shape({
   title: yup.string().required("Please  enter an title"),
@@ -27,14 +27,29 @@ const UpdateBlog = () => {
       <Box
         sx={{
           width: "100%",
+          height: "530px",
           display: "flex",
           justifyContent: "center",
           gap: "1rem",
-          padding: "2rem 5rem",
+          padding: "2rem",
         }}
       >
-        <img src={BlogBoard} alt="Blog-Board" width="40%" />
-        <Box sx={{ width: "40%" }}>
+        <Box
+          sx={{
+            width: "100%",
+            borderRadius: "1rem",
+            overflow: "hidden",
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <img
+            src={img || Placeholder}
+            alt="Blog-Board"
+            width="100%"
+            height="100%"
+          />
+        </Box>
+        <Box sx={{ width: "100%" }}>
           <Formik
             initialValues={{
               id: id,
@@ -69,7 +84,7 @@ const UpdateBlog = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: ".5rem",
+                    gap: ".6rem",
                   }}
                 >
                   <TextField
@@ -105,7 +120,7 @@ const UpdateBlog = () => {
                     error={touched.content && Boolean(errors.content)}
                     helperText={touched.content && errors.content}
                     multiline
-                    rows={10}
+                    rows={11}
                   />
                   <LoadingButton
                     type="submit"

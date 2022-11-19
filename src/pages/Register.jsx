@@ -49,18 +49,17 @@ const Register = () => {
   const navigate = useNavigate();
 
   return (
-    <Grid container component="main" sx={{ height: `calc(100vh - 64px)` }}>
+    <Grid container component="main" sx={{ height: `calc(100vh - (64px))` }}>
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <Box
           sx={{
-            my: 1,
-            mx: 4,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            overflow: "auto",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5" mb={1}>
@@ -77,21 +76,13 @@ const Register = () => {
               }}
               validationSchema={loginSchema}
               onSubmit={(values, actions) => {
-                const displayName = `${values.firstname} ${values.lastname}`;
-                createUser(values, displayName, navigate, setLoading);
+                createUser(values, navigate, setLoading);
                 setLoading(true);
                 actions.resetForm();
                 actions.setSubmitting(false);
               }}
             >
-              {({
-                values,
-                isSubmitting,
-                handleChange,
-                handleBlur,
-                touched,
-                errors,
-              }) => (
+              {({ values, handleChange, handleBlur, touched, errors }) => (
                 <Form>
                   <Box
                     sx={{

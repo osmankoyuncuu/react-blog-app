@@ -1,7 +1,11 @@
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { useAuth } from "../context/AuthContext";
+import NotUser from "../assets/user.svg";
 
 const Profile = () => {
+  const { currentUser } = useAuth();
+  console.log(currentUser);
   return (
     <Box
       sx={{
@@ -9,7 +13,8 @@ const Profile = () => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        height: "90vh",
+        height: "80vh",
+        padding: "1rem",
       }}
     >
       <Box
@@ -21,7 +26,7 @@ const Profile = () => {
           flexDirection: "column",
           gap: "1rem",
           border: "2px solid gray",
-          padding: "1rem",
+          padding: ".5rem",
           borderRadius: "1rem",
         }}
       >
@@ -31,36 +36,13 @@ const Profile = () => {
             height: "200px",
             borderRadius: "50%",
             overflow: "hidden",
+            backgroundImage: `url(${currentUser.photoURL || NotUser})`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
           }}
-        >
-          <img src="https://picsum.photos/200/200" alt="profile" />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "start",
-            width: "80%",
-            borderBottom: "2px solid gray",
-            gap: ".3rem",
-          }}
-        >
-          <Typography sx={{ color: "gray" }}>First Name</Typography>
-          <Typography>Osman</Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "start",
-            width: "80%",
-            borderBottom: "2px solid gray",
-            gap: ".3rem",
-          }}
-        >
-          <Typography sx={{ color: "gray" }}>Last Name</Typography>
-          <Typography>Koyuncu</Typography>
-        </Box>
+        ></Box>
+
         <Box
           sx={{
             display: "flex",
@@ -72,7 +54,7 @@ const Profile = () => {
           }}
         >
           <Typography sx={{ color: "gray" }}>Username</Typography>
-          <Typography>Lieutenant</Typography>
+          <Typography>{currentUser?.displayName}</Typography>
         </Box>
         <Box
           sx={{
@@ -85,7 +67,7 @@ const Profile = () => {
           }}
         >
           <Typography sx={{ color: "gray" }}>Email</Typography>
-          <Typography>osmannnkoyuncuuu@gmail.com</Typography>
+          <Typography>{currentUser?.email}</Typography>
         </Box>
       </Box>
     </Box>

@@ -6,6 +6,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import AppRouter from "./router/AppRouter";
 import "react-toastify/dist/ReactToastify.css";
 import { BlogListProvider } from "./context/BlogListContext";
+import { FavoriteProvider } from "./context/FavoriteContext";
 
 const App = () => {
   const theme = createTheme({
@@ -18,11 +19,13 @@ const App = () => {
   return (
     <AuthContextProvider>
       <BlogListProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <AppRouter />
-          <ToastContainer />
-        </ThemeProvider>
+        <FavoriteProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppRouter />
+            <ToastContainer />
+          </ThemeProvider>
+        </FavoriteProvider>
       </BlogListProvider>
     </AuthContextProvider>
   );

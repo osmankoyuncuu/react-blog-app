@@ -23,14 +23,25 @@ const NewBlog = () => {
       <Box
         sx={{
           width: "100%",
+          height: "515px",
           display: "flex",
           justifyContent: "center",
           gap: "1rem",
-          padding: "2rem 5rem",
+          padding: "2rem",
         }}
       >
-        <img src={BlogBoard} alt="Blog-Board" width="40%" />
-        <Box sx={{ width: "40%" }}>
+        {" "}
+        <Box
+          sx={{
+            width: "100%",
+            borderRadius: "1rem",
+            overflow: "hidden",
+            display: { xs: "none", lg: "flex" },
+          }}
+        >
+          <img src={BlogBoard} alt="Blog-Board" width="100%" height="100%" />
+        </Box>
+        <Box sx={{ width: "100%" }}>
           <Formik
             initialValues={{
               title: "",
@@ -43,6 +54,8 @@ const NewBlog = () => {
               }),
               author: currentUser?.displayName,
               user: currentUser?.email,
+              favoriteList: [],
+              commentList: [],
             }}
             validationSchema={newBlogSchema}
             onSubmit={(values, actions) => {
@@ -65,8 +78,7 @@ const NewBlog = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-
-                    gap: ".5rem",
+                    gap: ".7rem",
                   }}
                 >
                   <TextField

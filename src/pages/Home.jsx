@@ -1,7 +1,19 @@
 import Box from "@mui/material/Box";
+import { useEffect } from "react";
 import BlogCard from "../component/BlogCard";
+import Loading from "../component/Loading";
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
+  const { loading, setLoading } = useAuth();
+  setTimeout(() => {
+    setLoading(false);
+  }, 3000);
+
+  useEffect(() => {
+    setLoading(true);
+  }, []);
+
   return (
     <Box
       m={6}
@@ -13,7 +25,7 @@ const Home = () => {
         flexWrap: "wrap",
       }}
     >
-      <BlogCard />
+      {loading ? <Loading /> : <BlogCard />}
     </Box>
   );
 };

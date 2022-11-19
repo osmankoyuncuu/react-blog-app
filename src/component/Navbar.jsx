@@ -25,6 +25,7 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   return (
     <>
       <AppBar position="fixed">
@@ -35,20 +36,21 @@ const Navbar = () => {
               noWrap
               href="/"
               sx={{
+                display: { xs: "none", sm: "flex" },
                 mr: 2,
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
+                fontFamily: "Rubik Distressed",
+                letterSpacing: ".4rem",
                 color: "inherit",
                 textDecoration: "none",
                 cursor: "pointer",
+                fontSize: "2rem",
               }}
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/");
               }}
             >
-              LOGO
+              Blog App
             </Typography>
 
             <Box

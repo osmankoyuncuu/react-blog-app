@@ -11,6 +11,7 @@ import NotFound from "../pages/NotFound";
 import { useBlogList } from "../context/BlogListContext";
 import { useBlogListener } from "../auth/firebase";
 import PrivateRouter from "./PrivateRouter";
+import Footer from "../component/Footer";
 
 const AppRouter = () => {
   const { setBlogList } = useBlogList();
@@ -20,16 +21,24 @@ const AppRouter = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
         <Route path="/detail/:id" element={<PrivateRouter />}>
           <Route path="" element={<Detail />} />
         </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/new-blog" element={<NewBlog />} />
-        <Route path="/update-blog/:id" element={<UpdateBlog />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/new-blog" element={<PrivateRouter />}>
+          <Route path="" element={<NewBlog />} />
+        </Route>
+        <Route path="/update-blog/:id" element={<PrivateRouter />}>
+          <Route path="" element={<UpdateBlog />} />
+        </Route>
+        <Route path="/profile" element={<PrivateRouter />}>
+          <Route path="" element={<Profile />} />
+        </Route>
         <Route path="/*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };
