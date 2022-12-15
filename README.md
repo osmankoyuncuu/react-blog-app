@@ -1,3 +1,62 @@
+## Check The Live Website ➡️ [Live Website](https://osman-blog-app.netlify.app/)
+
+## Description
+
+Project aims to create a Blog App.
+
+## Project Skeleton
+
+    react-blog-app
+    |
+    ├── public
+    │    ├── favicon.ico
+    │    └── index.html
+    ├── src
+    │    ├── assets
+    │    │      ├── blog-board.jpg
+    │    │      ├── google.png
+    │    │      ├── placeholder.png
+    │    │      └── user.svg
+    │    ├── auth
+    │    │      └── firebase.js
+    │    ├── components
+    │    │       ├── BlogCard.jsx
+    │    │       ├── Comment.jsx
+    │    │       ├── Footer.jsx
+    │    │       ├── Loading.jsx
+    │    │       ├── ModalDelete.jsx
+    │    │       └── Navbar.jsx
+    │    ├── context
+    │    │       ├── AuthContext.jsx
+    │    │       ├── BlogListContext.jsx
+    │    │       └── FavoriteContext.jsx
+    │    ├── helper
+    │    │       └── ToastNotify.js
+    │    ├── pages
+    │    │       ├── Detail.jsx
+    │    │       ├── Home.jsx
+    │    │       ├── Login.jsx
+    │    │       ├── NewBlog.jsx
+    │    │       ├── NotFound.jsx
+    │    │       ├── Profile.jsx
+    │    │       ├── Register.jsx
+    │    │       └── UpdateBlog.jsx
+    │    ├── router
+    │    │       ├── AppRouter.jsx
+    │    │       └── PrivateRouter.jsx
+    │    ├── App.css
+    │    ├── App.js
+    │    ├── index.css
+    │    └── index.js
+    ├── .gitignore
+    ├── package.json
+    ├── README.md
+    └── yarn.lock
+
+## Overview
+
+I mastered React, Material UI, formik library, yup library, react toastnotify and firebase firestore database features in this project. You can see the visual representation of the website above.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
